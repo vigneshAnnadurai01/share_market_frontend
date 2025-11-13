@@ -542,7 +542,7 @@
       chartContainer.style.display = 'none';
 
       try {
-        const response = await fetch(`http://127.0.0.1:9001/api/stock?ticker=${ticker}&period=${period}`);
+        const response = await fetch(`https://sharemarket-production.up.railway.app/api/stock?ticker=${ticker}&period=${period}`);
         const data = await response.json();
 
         if (data.error) {
