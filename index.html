@@ -458,6 +458,164 @@
     © 2025 VikasX.com | Professional Stock Market Analysis Platform
   </div>
 
+
+<!-- chnage  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VikasX.solution Stock Market Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen font-sans">
+
+  <div class="max-w-6xl mx-auto p-6">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-4xl font-bold text-gray-800 mb-2">Indian Stock Market - VikasX.solution</h1>
+      <p class="text-gray-600">Real-time market data and insights</p>
+    </div>
+
+    <!-- Market Indices -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8" id="indices-container">
+      <!-- Indices will be inserted here by JS -->
+    </div>
+
+    <!-- Top Stocks Section -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="mb-6">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">Top Stocks</h2>
+        <div class="relative">
+          <span class="absolute left-3 top-3 text-gray-400">
+            <i data-feather="search"></i>
+          </span>
+          <input type="text" id="searchInput" placeholder="Search stocks by symbol..." 
+                 class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+      </div>
+
+      <!-- Stocks Table -->
+      <div class="overflow-x-auto">
+        <table class="w-full" id="stocksTable">
+          <thead class="bg-gray-100 border-b">
+            <tr>
+              <th class="px-4 py-3 text-left font-semibold text-gray-700">Symbol</th>
+              <th class="px-4 py-3 text-left font-semibold text-gray-700">Price</th>
+              <th class="px-4 py-3 text-left font-semibold text-gray-700">Change</th>
+              <th class="px-4 py-3 text-left font-semibold text-gray-700">Volume</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Stocks will be inserted here by JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <div id="noStocks" class="text-center py-8 text-gray-500 hidden">
+        No stocks found.
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="mt-8 text-center text-sm text-gray-600">
+      <p>Market data updates every 15 minutes • Last updated: <span id="lastUpdated"></span></p>
+    </div>
+  </div>
+
+  <script>
+    feather.replace();
+
+    const indices = [
+      { name: 'SENSEX', value: '77,234.50', change: '+1.24%', trend: 'up', high: '77,500', low: '76,800' },
+      { name: 'NIFTY 50', value: '23,456.25', change: '+0.85%', trend: 'up', high: '23,600', low: '23,200' },
+      { name: 'NIFTY IT', value: '34,567.80', change: '-0.45%', trend: 'down', high: '34,900', low: '34,200' },
+      { name: 'BANK NIFTY', value: '45,123.45', change: '+2.12%', trend: 'up', high: '45,500', low: '44,800' },
+    ];
+
+    const topStocks = [
+      { symbol: 'RELIANCE', price: '₹2,845.50', change: '+1.85%', trend: 'up', volume: '2.3M' },
+      { symbol: 'TCS', price: '₹4,123.75', change: '+0.92%', trend: 'up', volume: '1.8M' },
+      { symbol: 'INFY', price: '₹1,956.30', change: '-1.23%', trend: 'down', volume: '3.2M' },
+      { symbol: 'ICICIBANK', price: '₹956.45', change: '+2.45%', trend: 'up', volume: '4.1M' },
+      { symbol: 'HINDUNILVR', price: '₹2,567.80', change: '-0.67%', trend: 'down', volume: '0.9M' },
+      { symbol: 'WIPRO', price: '₹823.15', change: '+1.34%', trend: 'up', volume: '2.7M' },
+    ];
+
+    const indicesContainer = document.getElementById('indices-container');
+    const stocksTableBody = document.querySelector('#stocksTable tbody');
+    const searchInput = document.getElementById('searchInput');
+    const noStocksDiv = document.getElementById('noStocks');
+    const lastUpdated = document.getElementById('lastUpdated');
+
+    function renderIndices() {
+      indicesContainer.innerHTML = '';
+      indices.forEach(index => {
+        const colorClass = index.trend === 'up' ? 'text-green-600' : 'text-red-600';
+        const trendIcon = index.trend === 'up' ? 'trending-up' : 'trending-down';
+        const html = `
+          <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition">
+            <h3 class="text-sm font-semibold text-gray-600 mb-2">${index.name}</h3>
+            <p class="text-2xl font-bold text-gray-800 mb-2">${index.value}</p>
+            <div class="flex items-center gap-1 text-sm font-semibold ${colorClass}">
+              <i data-feather="${trendIcon}"></i> ${index.change}
+            </div>
+            <div class="text-xs text-gray-500 mt-3 space-y-1">
+              <p>High: ${index.high}</p>
+              <p>Low: ${index.low}</p>
+            </div>
+          </div>
+        `;
+        indicesContainer.insertAdjacentHTML('beforeend', html);
+      });
+      feather.replace();
+    }
+
+    function renderStocks(filter = '') {
+      const filtered = topStocks.filter(stock => stock.symbol.toLowerCase().includes(filter.toLowerCase()));
+      stocksTableBody.innerHTML = '';
+      if (filtered.length === 0) {
+        noStocksDiv.classList.remove('hidden');
+        return;
+      } else {
+        noStocksDiv.classList.add('hidden');
+      }
+      filtered.forEach(stock => {
+        const colorClass = stock.trend === 'up' ? 'text-green-600' : 'text-red-600';
+        const trendIcon = stock.trend === 'up' ? 'trending-up' : 'trending-down';
+        const row = document.createElement('tr');
+        row.className = 'border-b hover:bg-gray-50 transition';
+        row.innerHTML = `
+          <td class="px-4 py-4 font-semibold text-gray-800">${stock.symbol}</td>
+          <td class="px-4 py-4 text-gray-700">${stock.price}</td>
+          <td class="px-4 py-4 flex items-center gap-1 font-semibold ${colorClass}">
+            <i data-feather="${trendIcon}"></i> ${stock.change}
+          </td>
+          <td class="px-4 py-4 text-gray-600">${stock.volume}</td>
+        `;
+        stocksTableBody.appendChild(row);
+      });
+      feather.replace();
+    }
+
+    searchInput.addEventListener('input', (e) => {
+      renderStocks(e.target.value);
+    });
+
+    renderIndices();
+    renderStocks();
+    lastUpdated.textContent = new Date().toLocaleString();
+  </script>
+</body>
+</html>
+
+
+<!-- change  -->
+
+
+
   <script>
     const indianStocks = [
       { name: "Reliance Industries", ticker: "RELIANCE.NS" },
@@ -747,3 +905,4 @@
   </script>
 </body>
 </html>
+
